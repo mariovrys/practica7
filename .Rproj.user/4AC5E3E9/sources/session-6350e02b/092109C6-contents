@@ -1,0 +1,41 @@
+---
+title: "Práctica 7"
+author: "Mario Vázquez Reyes"
+date: "2023-03-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Ejercicio 1
+
+Aplica un contraste de hipótesis basado en la media a 
+y1 
+y1 e y2
+
+```{r cars}
+x <- rbinom(1000,1,prob = 0.1)
+y <- rbinom(1000,1,prob = 0.1)
+
+muestra1 <- rnorm(1000)
+muestra2 <- rnom(1000)
+
+y1 <- x*muestra1
+y2 <- y*muestra2
+
+hist(y1)
+hist(y2)
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
