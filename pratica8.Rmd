@@ -1,0 +1,254 @@
+---
+title: "Práctica 8"
+author: "Mario Vázquez Reyes"
+date: "2023-03-27"
+output: html_document
+---
+
+1. Instale y cargue las siguientes librerías: “MASS”, “caret”, “stat”, “olsrr”, “kable”,
+“kableExtra”, “knitr” y “rmarkdown”.
+
+  Para instalar las librerias simplemente hay que buscarlas en el repositorio de CRAN y activarlas en el apartado de paquetes o instalarlas con la función library(""). 
+
+  
+2. Cree 2 variables almacenadas como vector: “y_cuentas” y “x_distancia” a partir
+de los siguientes valores numéricos:
+-Cuentas: “110,2,6,98,40,94,31,5,8,10”
+-Distancia: “1.1,100.2,90.3,5.4,57.5,6.6,34.7,65.8,57.9,86.1”
+
+```{r setup, include=FALSE}
+y_cuentas <- c(110,2,6,98,40,94,31,5,8,10) #Se crean los dos vectores con c() y los valores que le queremos asociar. 
+x_distancia <- c(1.1,100.2,90.3,5.4,57.5,6.6,34.7,65.8,57.9,86.1)
+
+```
+
+3. Verifique el supuesto de linealidad de la variable explicativa incluyendo un
+contraste de hipótesis. 
+
+```{r setup, include=FALSE}
+plot(x_distancia, y_cuentas) #Primero se plotean los dos vectores. 
+cor.test(x_distancia, y_cuentas) #El valor del p-value es menos a 0,05. 
+
+```
+
+4. Verifique el supuesto de normalidad de la variable explicativa mediante su
+visualización en un histograma y un test de normalidad.
+
+```{r setup, include=FALSE}
+hist(x_distancia) #Se hace el histograma de la variable exlicativa. 
+shapiro.test(x_distancia) #Y con la funcion de shapiro.test se comprueba la normalidad, obteniendo un p-value de 0,2602 y concluyendo que, es mayor que el nivel de significacion (0,05).
+
+```
+
+5. Multiplique las variables de respuesta por la variable explicativa. Llama al objeto
+“xy”.
+
+```{r setup, include=FALSE}
+xy <- x_distancia * y_cuentas
+xy
+
+```
+
+6. Eleve al cuadrado la variable explicativa. Llama al objeto “x_cuadrado”. 
+
+```{r setup, include=FALSE}
+x_cuadrado <- x_distancia^2
+x_cuadrado
+
+```
+
+7. A continuación, almacena las variables: “y_cuentas”, “x_distancia”, “xy” y
+“x_cuadrado” en un data frame llamado “tabla_datos”.
+
+```{r setup, include=FALSE}
+tabla_datos <- data.frame(y_cuentas, x_distancia, xy, x_cuadrado) #Con la funcion data.frame se almacenan los objetos que necesitamos en un mismo data frame. 
+tabla_datos #Para visualizar en la consola. 
+
+```
+
+8. Visualice el objeto “tabla_datos” en una tabla en la consola a través de alguna
+de las funciones ofrecidas por la librería “kableExtra”.
+
+```{r setup, include=FALSE}
+kbl(tabla_datos) #Activando la libreria de KableExtra, con la funcion kbl y entre parentesis el objeto que queremos se visualiza la tabla en la consola. 
+
+```
+
+9. Realice el sumatorio de los valores almacenados en las 4 columnas del data
+frame “tabla_datos”. 
+
+```{r setup, include=FALSE}
+sumatorio <- y_cuentas + x_distancia + xy + x_cuadrado
+sumatorio
+
+```
+
+10. Añada el sumatorio de las 4 columnas como un último registro en el data frame
+“tabla_datos” de modo que tengamos en un solo objeto los valores junto con el
+sumatorio.
+
+```{r setup, include=FALSE}
+sumatorio_columnas_df <- rbind(tabla_datos, sumatorio)
+kbl(sumatorio_columnas_df)
+kable_minimal
+row_spec(nrow(sumatorio_columnas_df), bold = TRUE, color = "black", background = "white")
+
+```
+
+11. Calcule la recta de regresión por el método de mínimos cuadrados (ordinario)
+a través de los datos incluidos en el data frame “tabla_datos”.
+
+```{r setup, include=FALSE}
+recreg <- lm(y_cuentas ~ x_distancia = tabla_datos) #Con la funcion lm se calcula la recta de regresion. 
+recreg
+sume11 <- summary(recreg) #Y con summary se comprueban los valores de la recta. 
+sume11
+
+```
+
+12. Visualice en un gráfico de dispersión la recta de regresión, nube de puntos.
+Indique en el título la ecuación resultante y edite los nombre de los ejes.
+
+```{r setup, include=FALSE}
+plot(x_distancia, y_cuentas)
+reg <- lm(x_distancia ~ y_cuentas, data = tabla_datos)
+summary(reg)
+abline(reg)
+
+```
+
+13.Calcule los residuos, residuos estandarizados y residuos estudentizados del
+modelo recién ajustado.
+
+```{r setup, include=FALSE}
+e13 <- lm(y_cuentas ~ x_distancia, data = tabla_datos) #Para calcular los residuos. 
+residuos <- residuals(e13)
+residuos
+e13b <- lm(y_cuentas ~ x_distancia, data = tabla_datos) #Para calcular los residuos estandarizados. 
+restandarizados <- rstandard(e13b)
+restandarizados
+e13c <- lm(y_cuentas ~ x_distancia, data = tabla_datos) #Para calcular los residuos estudentizados. 
+restudentizados <- rstudent(e13c)
+restudentizados
+
+```
+
+14.Calcula el pronóstico o estimación del modelo para una observación que
+registra una distancia de 6.6km con respecto a la mina.
+
+```{r setup, include=FALSE}
+
+
+```
+
+15.Genera dos conjuntos aleatorios de datos: “entrenamiento” y “validación”.
+
+```{r setup, include=FALSE}
+entrenamiento <- rnorm(10)
+entrenamiento
+validacion <- rnorm(10)
+validacion
+
+```
+
+16.Ajusta nuevamente el modelo con el conjunto de “entrenamiento”.
+
+```{r setup, include=FALSE}
+#Coger 8 observaciones de manera aleatoria
+library(caret)
+data <- data.frame(y_cuentas, x_distancia)
+train_sample <- data %>%
+createDataPartition(times=1, p=8, list=FALSE)
+e16test <- tabla_datos[train_sample , ]
+e16train <- tabla_datos[-train_sample , ]
+nrow(e16test)
+nrow(e16train)
+
+#La funcion anterior suele dar error, por lo que puede usarse tambien esta. 
+library(dplyr)
+train <- data %>% dplyr:sample_frac(.8)
+test <- dplyr::anti_join(data, train)
+
+# Cuantos mas asteriscos haya mas probabilidad hay de que sea azarosa. 
+
+```
+
+17. Interprete el valor asociado a los coeficientes de regresión y a R2. ¿Qué significan los asteriscos inmediatamente a la derecha de los valores arrojados
+tras ajustar el modelo?
+
+```{r setup, include=FALSE}
+#El valor de los coeficientes de regresión muestra la relación que hay entre la variable dependiente y la variable independiente y el valor de R2 muestra la proporcion de la variabilidad total de la variable dependiente. Que el valor se acerque a 1 indica que el modelo expone mucha cantidad de la variabilidad de la variable dependiente y si se acerca a 0, el modelo no explica esta variabilidad. 
+
+e17 <- function(y_cuentas, x_distancia) {
+  e17b <- lm(y_cuentas ~ x_distancia)
+  summary(e17b)
+}
+
+#Los asteriscos indican la significancia estadísitca del coeficiente, que sera estadisticamente significativo y que la probabilidad de que se tenga un valor extremo por casualidad es baja. 
+
+```
+
+18.¿Cómo se ha realizado el cálculo para los grados de libertad del modelo?
+
+  Los grados de libertad se calculan como el número total de observaciones menos el número de parámetros estimados. 
+
+19. Especifique el total de varianza explicada y no explicada por el modelo.
+
+  La varianza total de la variable dependiente se puede descomponer entre la varianza explicada por el modelo (variabilidad en la variable dependiente) y la residual, que se calcula como la suma de los cuadrados de los residuos, que se obtiene tras la suma de los cuadrados de las diferencias entre los valores observados de las predicciones del modelo y de la variable dependiente.
+  
+```{r setup, include=FALSE}
+pre <- predict(e17b)
+med <- mean(y)
+SSR <- sum((pre - med)^2)
+SSE <- sum((y - pre)^2)
+SST <- SSR + SSE
+R2 <- SSR / SST
+list(SSR = SSR, SSE = SSE, SST = SST, R2 = R2)
+
+```
+
+20. Aplique la validación cruzada simple para evaluar la robustez y capacidad
+predictiva del modelo.
+
+```{r setup, include=FALSE}
+e20 <- predict(train, newdata = test)
+ecm <- sqrt(mean((test$y - e20)^2))
+ecm
+
+```
+
+21.Verifique que no existen observaciones influyentes.
+
+  Para verificar la existencia de observaciones influyentes, es necesario el ajuste del modelo y obtener las medidas de influencia y despues verificar las observaciones. 
+  
+```{r setup, include=FALSE}
+inf <- influence.measures(recreg)
+inf$cook
+inf$hat
+inf$studentized.residuals
+
+```
+
+22.Verifique el supuesto de independencia de los residuos.
+
+  Se obtienen los residuos y se crea un gráfico de residuos y los valores ajustados. 
+```{r setup, include=FALSE}
+res <- residuals(recreg)
+plot(recreg$fitted.values, res, xlab = "Valores ajustados", ylab = "Residuos")
+abline(h = 0, lty = 2)
+title("Grafico de residuos y valores ajustados")
+```
+
+23.Confirme que los errores del modelo permanecen constantes para todo el
+rango de estimaciones.
+
+  Se puede crear un gráfico de los residuos estandarizados y los valores ajustados. Si se observa que los valores son constantes para todo el rango de valores ajustados deben de estar situados cerca de 0. 
+  
+```{r setup, include=FALSE}
+resiestan <- rstandard(recreg)
+plot(recreg$fitted.values, resiestan, xlab = "Valores ajustados", ylab = "Residuos estandarizados")
+abline(h = 0, lty = 2)
+
+```
+
+## R Markdown
