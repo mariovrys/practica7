@@ -1,0 +1,91 @@
+---
+title: "El dorado metalúrgico con amalgama de mercurio en la Península Ibérica"
+author: "Mario Vázquez Reyes"
+date: "2023-05-19"
+output:
+  html_document: default
+  word_document: default
+  pdf_document: default
+---
+
+## El dorado metalúrgico con amalgama de mercurio en la Península Ibérica
+
+  	A lo largo de la historia, el dorado, ha sido una de las técnicas metalúrgicas más utilizadas por todas las sociedades usualmente usado para cambiar el aspecto de un material para que parezca que tenga una fábrica de metal noble dado que la manufactura de grandes artefactos en estos materiales requería una gran inversión de tiempo y de recursos económicos. 
+  	
+  	Para solventarlo, lo que se hacía era revestir el material que fuese con láminas delgadas de metales nobles como el oro. En el presente trabajo se pretenderá fundamentar la hipótesis que respalda que la técnica del dorado metalúrgico fue utilizada antes de la llegada de los romanos por las sociedades indígenas de la Península Ibérica con funciones llevadas a cabo en RStudio con un análisis estadístico. 
+
+  En primer lugar, importamos la base de datos de los diferentes artefactos de metal que han sido
+analizados. 
+
+```{r cars}
+summary(cars)
+
+bd
+
+```
+
+  Con los datos importados, cambiaremos los nombres de las variables que nos interese cambiar, en este caso la variable referente al elemento del mercurio (Hg d) y la variable de la cronología (Cronologia in). Con esto, facilitaremos la lectura de la función en la consola y la ergonomía visual a la hora de trabajar. 
+
+```{r setup, include=FALSE}
+
+names(bd) [names(bd) == "Hg d"] <- "hg"
+
+names(bd) [names(bd) == "Cronologia in"] <- "Cronol"
+
+```
+
+  Lo siguiente es cambiar los datos que nos interese asociar a los números 0 y 1 del, en este caso, mercurio y de los yacimientos que son de origen romano. Con esto buscamos averiguar la relación entre la metalurgia que utiliza la amalgama de mercurio como técnica para el dorado y la manufactura romana del yacimiento. 
+
+```{r setup, include=FALSE}
+
+bd$hg <- ifelse(bd$hg == "Si", 0, 1) #Si-0 No-1
+
+bd$Roman <- ifelse(bd$Roman == "Si", 0, 1)
+
+```
+
+  Continuamos haciendo dos vectores con los valores de, primero, la presencia romana referenciando a cada una de las partes del artefacto analizado, y la confirmación de si dicha parte tiene o no la técnica del dorado con amalgama de mercurio. 
+
+```{r setup, include=FALSE}
+
+roman <- c(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1)
+hg <- c(0, 1, 0, 0, 0 ,0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+
+```
+
+  Creamos un dataframe con las variables de la presencia romana como variable independiente en le eje x y mercurio como variable dependiente en el eje y. Después, convertir las variables del mercurio y cronologia en un factor. 
+
+```{r setup, include=FALSE}
+
+df <- data.frame(roman, hg) #Hg - y ; roman - x
+
+df
+
+as.factor(bd$hg)
+
+```
+
+  Cargamos el paquete de ordinal y ajustamos el modelo con glm y la función summary para que se nos muestre un resumen de los resultados del modelo. Con la función predict se representan las predicciones de la variable dependiente (el mercurio) en nuevas observaciones. 
+
+```{r setup, include=FALSE}
+library(ordinal)
+
+rlo <- glm(hg ~ roman, data = df, family = binomial)
+
+summary(rlo)
+
+predict(rlo)
+
+```
+
+
+## Conclusiones
+
+
+  Estos datos pueden variar en función del contexto de los datos recopilados. Las partes de artefacto del 1 al 8 (las fíbulas 1, 2 y 3) tienen un valor de predicción de aproximadamente 0.452, mientras que los números del 17 al 23 tienen un valor de predicción de aproximadamente 18.566.
+  
+  Con los resultados obtenidos, se puede lanzar la hipótesis de que la técnica del dorado metalúrgico con amalgama de mercurio forma parte de una creación propia de las culturas indígenas de la Península Ibérica antes de la aculturación romana. 
+  
+  Con una base de datos más extensa (con la aportación de más estudios arqueometalúrgicos de otros yacimientos), la investigación sería más concreta a la hora de destacar enclaves que muestren esta tendencia del dorado metalúrgico sobre amalgama de mercurio situado antes del contacto con el mundo romano, lo que prueba que tal técnica no fue fruto de la aculturación, o al menos en algunos yacimientos de determinadas culturas. 
+  
+  Como podemos ver en el caso de la espiral de la Corona de los Corporales, un yacimiento donde la presencia romana no estuvo presente y se documenta el dorado con amalgama de mercurio. 
